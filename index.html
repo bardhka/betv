@@ -2,21 +2,140 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BETV</title>
-<link rel="stylesheet" href="css/app.css">
-<script src="$WEBAPIS/webapis/webapis.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0c0e12">
+<title>Send to BETV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#0c0e12; --panel:#14171d; --raise:#1c2029; --line:#2a303b;
+  --fg:#eef1f5; --fg2:#c9cfd8; --muted:#97a0ad; --dim:#677080;
+  --accent:#ff6b3d; --accent-ink:#1c0b04; --live:#e5484d; --ok:#3dd68c;
+  --font-display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --font-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding:calc(env(safe-area-inset-top,0px) + 28px) 18px calc(env(safe-area-inset-bottom,0px) + 32px)}
+[hidden]{display:none!important}
+main{max-width:520px;margin:0 auto}
+.logo{font-family:var(--font-display);font-weight:800;font-size:30px;letter-spacing:-.03em;display:flex;align-items:center;line-height:1}
+.logo b{background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:3px 6px 4px;margin-left:3px}
+h1{font-family:var(--font-display);font-size:34px;font-weight:800;letter-spacing:-.025em;line-height:1.02;margin:30px 0 10px;text-wrap:balance}
+.lead{color:var(--muted);line-height:1.55;margin:0 0 26px;font-size:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}
+label{display:block;font-weight:800;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.field{margin-bottom:20px}
+input,textarea{width:100%;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px 15px;color:var(--fg);font:600 16px var(--font-body);outline:none}
+textarea{min-height:96px;resize:vertical;font-size:15px;line-height:1.45;word-break:break-all}
+input:focus,textarea:focus{border-color:var(--accent)}
+#code{font-family:var(--font-display);font-size:28px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;text-align:center}
+.paired{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(61,214,140,.08);border:1px solid rgba(61,214,140,.35);border-radius:12px;padding:12px 14px;margin-bottom:20px}
+.paired span{color:var(--fg2);font-size:14px;font-weight:600}
+.paired b{display:block;font-family:var(--font-display);font-size:22px;letter-spacing:.1em;color:var(--fg);margin-top:2px}
+.link-btn{background:none;border:0;color:var(--accent);font:700 14px var(--font-body);padding:6px;cursor:pointer}
+.row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.row label{margin:0}
+.preview{margin-top:12px;border-radius:12px;background:var(--raise);padding:13px 15px;font-size:14px;line-height:1.5;color:var(--fg2)}
+.preview b{color:var(--ok);font-size:14px}
+.preview.bad{color:var(--live)}
+.preview dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;margin:8px 0}
+.preview dt{color:var(--muted)}
+.preview dd{margin:0;font-weight:700;overflow-wrap:anywhere;color:var(--fg)}
+.preview p{margin:0;color:var(--muted)}
+.send{width:100%;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);font:800 18px var(--font-body);padding:17px;cursor:pointer;margin-top:6px}
+.send:disabled{opacity:.6}
+.send:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+.err{color:var(--live);font-weight:700;font-size:14px;min-height:20px;margin:12px 0 0}
+.note{display:flex;gap:10px;color:var(--dim);font-size:13.5px;line-height:1.5;margin-top:20px}
+.note svg{flex:0 0 auto;width:18px;height:18px;margin-top:1px;color:var(--muted)}
+.done{text-align:center;padding:36px 20px}
+.done .tick{width:72px;height:72px;border-radius:50%;background:rgba(61,214,140,.14);color:var(--ok);display:grid;place-items:center;margin:0 auto 18px}
+.done .tick svg{width:36px;height:36px}
+.done h2{font-family:var(--font-display);font-size:30px;margin:0 0 10px}
+.done p{color:var(--muted);line-height:1.55;margin:0 0 24px}
+.ghost{background:var(--raise);border:1px solid var(--line);color:var(--fg);font:700 16px var(--font-body);border-radius:12px;padding:13px 20px;cursor:pointer}
+</style>
 </head>
 <body>
-<object id="av-player" type="application/avplayer"></object>
-<div class="app" id="app">
-  <aside class="rail" id="rail"></aside>
-  <main class="stage" id="stage"></main>
-</div>
-<div id="modal"></div>
-<div class="player" id="player" hidden></div>
-<div class="loading" id="loading" hidden></div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="js/app.js"></script>
+<main>
+  <div class="logo" aria-label="BETV">BE<b>TV</b></div>
+  <h1>Send a playlist to your TV</h1>
+  <p class="lead">Paste the M3U link from your IPTV provider. It appears on your TV a few seconds later.</p>
+
+  <form class="card" id="form" autocomplete="off">
+    <div id="code-locked" class="paired" hidden>
+      <div><span>Sending to the TV showing</span><b id="code-show"></b></div>
+      <button type="button" class="link-btn" id="change-code">Change</button>
+    </div>
+    <div id="code-field" class="field">
+      <label for="code">Code on your TV</label>
+      <input id="code" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="XXXX-XXXX" maxlength="9">
+    </div>
+    <div class="field">
+      <div class="row"><label for="link">Playlist link</label><button type="button" class="link-btn" id="paste">Paste</button></div>
+      <textarea id="link" spellcheck="false" autocapitalize="off" placeholder="http://server.com:8080/get.php?username=…&amp;password=…&amp;type=m3u_plus"></textarea>
+      <div id="preview" class="preview" hidden></div>
+    </div>
+    <div class="field">
+      <label for="name">Name on the TV (optional)</label>
+      <input id="name" type="text" placeholder="Home IPTV">
+    </div>
+    <button class="send" id="send" type="submit">Send to TV</button>
+    <p class="err" id="err" role="alert"></p>
+    <p class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11h12v9.5H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg><span>The link is encrypted on this device with your TV's code before it leaves. Only your TV can read it.</span></p>
+  </form>
+
+  <div class="card done" id="done" hidden>
+    <div class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2>Sent to your TV</h2>
+    <p>On the TV, select <b>Add and open</b>. Your channels, movies and series load right away.</p>
+    <button class="ghost" id="again" type="button">Send another playlist</button>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+<script>
+(function(){
+var RELAY="https://ntfy.sh/",ALPH="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function norm(s){return String(s||"").toUpperCase().replace(/[^A-Z0-9]/g,"").split("").filter(function(c){return ALPH.indexOf(c)>-1}).join("").slice(0,8)}
+function hex(b){return Array.prototype.map.call(b,function(x){return("0"+x.toString(16)).slice(-2)}).join("")}
+function derive(code){var h=nacl.hash(new TextEncoder().encode("betv-pair-v1:"+code));return{key:h.subarray(0,32),topic:"betv_"+hex(h.subarray(32,44))}}
+function b64(u){var s="";for(var i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s)}
+function seal(code,obj){var k=derive(code).key,n=nacl.randomBytes(24),b=nacl.secretbox(new TextEncoder().encode(JSON.stringify(obj)),n,k),a=new Uint8Array(24+b.length);a.set(n);a.set(b,24);return b64(a)}
+function parseLink(s){s=(s||"").trim();if(!s)return null;var u;try{u=new URL(s)}catch(e){return{error:"That isn't a full web address. Paste the whole link, starting with http:// or https://."}}
+if(!/^https?:$/.test(u.protocol))return{error:"The link should start with http:// or https://."};var us=u.searchParams.get("username"),pw=u.searchParams.get("password");
+if(us&&pw)return{type:"xtream",server:u.origin,user:us,pass:pw,host:u.host};return{type:"m3u",host:u.host}}
+var codeIn=$("#code"),nameIn=$("#name"),linkIn=$("#link"),preview=$("#preview"),sendBtn=$("#send"),errEl=$("#err"),form=$("#form"),done=$("#done");
+var code=norm(location.hash.slice(1));
+function paintCode(){var ok=code.length===8;$("#code-locked").hidden=!ok;$("#code-field").hidden=ok;if(ok)$("#code-show").textContent=code.slice(0,4)+"-"+code.slice(4)}
+codeIn.addEventListener("input",function(){var c=norm(codeIn.value);codeIn.value=c.length>4?c.slice(0,4)+"-"+c.slice(4):c;if(c.length===8){code=c;paintCode();linkIn.focus()}});
+$("#change-code").addEventListener("click",function(){code="";codeIn.value="";paintCode();codeIn.focus()});
+function paintPreview(){var r=parseLink(linkIn.value);errEl.textContent="";if(!r){preview.hidden=true;return}preview.hidden=false;
+if(r.error){preview.className="preview bad";preview.innerHTML=esc(r.error);return}preview.className="preview";
+preview.innerHTML=r.type==="xtream"?"<b>Xtream account found</b><dl><dt>Server</dt><dd>"+esc(r.server)+"</dd><dt>Username</dt><dd>"+esc(r.user)+"</dd><dt>Password</dt><dd>"+"•".repeat(Math.min(10,r.pass.length))+"</dd></dl><p>Your TV gets the full library: posters, seasons and the TV guide.</p>"
+:"<b>Playlist link</b><dl><dt>Host</dt><dd>"+esc(r.host)+"</dd></dl><p>Your TV loads the channels and titles in this playlist.</p>";
+if(!nameIn.value.trim()&&r.host)nameIn.placeholder=r.host.split(":")[0]}
+linkIn.addEventListener("input",paintPreview);
+$("#paste").addEventListener("click",function(){if(!navigator.clipboard||!navigator.clipboard.readText){linkIn.focus();return}
+navigator.clipboard.readText().then(function(t){if(t){linkIn.value=t.trim();paintPreview()}},function(){linkIn.focus();errEl.textContent="Your browser didn't allow pasting. Long-press the box and choose Paste."})});
+form.addEventListener("submit",function(e){e.preventDefault();errEl.textContent="";
+if(code.length!==8){errEl.textContent="Enter the 8-character code shown on your TV.";codeIn.focus();return}
+var r=parseLink(linkIn.value);if(!r){errEl.textContent="Paste your playlist link first.";linkIn.focus();return}if(r.error){errEl.textContent=r.error;linkIn.focus();return}
+if(typeof nacl==="undefined"){errEl.textContent="The page didn't finish loading. Reload it and try again.";return}
+sendBtn.disabled=true;sendBtn.textContent="Sending…";
+fetch(RELAY+derive(code).topic,{method:"POST",body:seal(code,{v:1,link:linkIn.value.trim(),name:nameIn.value.trim()})})
+.then(function(res){if(!res.ok)throw 0;form.hidden=true;done.hidden=false},function(){throw 0})
+.catch(function(){errEl.textContent="Couldn't send. Check your internet connection and try again."})
+.then(function(){sendBtn.disabled=false;sendBtn.textContent="Send to TV"})});
+$("#again").addEventListener("click",function(){done.hidden=true;form.hidden=false;linkIn.value="";nameIn.value="";paintPreview()});
+paintCode();
+})();
+</script>
 </body>
 </html>
