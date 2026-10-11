@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>BETV trailer</title>
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;color:#c9cfd8;font:600 22px system-ui,-apple-system,"Segoe UI",sans-serif}
+#p,#p iframe{position:absolute;inset:0;top:0;left:0;width:100%;height:100%;border:0}
+#msg{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;padding:0 24px}
+</style>
+</head>
+<body>
+<div id="p"></div><div id="msg" hidden></div>
+<script>
+/* BETV plays YouTube trailers through this page: YouTube refuses embeds from apps that have no web address
+   (TV widget, desktop and Android apps load from local files), so the player needs a real https page around it.
+   Usage: .../trailer/#<YouTube video id>. Tells the app (parent window) when the trailer ends or can't play. */
+(function () {
+  var key = (location.hash || "").slice(1).split("&")[0];
+  function tell(o) { try { o.betvTrailer = 1; parent.postMessage(JSON.stringify(o), "*"); } catch (e) {} }
+  function fail(t, code) { var m = document.getElementById("msg"); m.textContent = t; m.hidden = false; tell({ ev: "error", code: code || 0 }); }
+  if (!/^[A-Za-z0-9_-]{6,20}$/.test(key)) return fail("No trailer to play.", -1);
+  window.onYouTubeIframeAPIReady = function () {
+    new YT.Player("p", {
+      host: "https://www.youtube-nocookie.com", videoId: key,
+      playerVars: { autoplay: 1, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, fs: 0, origin: location.origin },
+      events: {
+        onReady: function (e) { try { e.target.playVideo(); } catch (x) {} tell({ ev: "ready" }); },
+        onStateChange: function (e) { if (e.data === 0) tell({ ev: "ended" }); if (e.data === 1) tell({ ev: "playing" }); },
+        onError: function (e) { fail(e.data === 101 || e.data === 150 ? "The studio doesn't allow this trailer outside YouTube." : "This trailer can't play right now.", e.data); }
+      }
+    });
+  };
+  var s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; s.onerror = function () { fail("Couldn't reach YouTube.", -2); };
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>
